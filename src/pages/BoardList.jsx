@@ -30,6 +30,21 @@ const PageButton = styled.button`
   border-radius: 6px;
 `;
 
+const TopBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+`;
+
+const WriteButton = styled.button`
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background: #111;
+  color: #fff;
+  border-radius: 6px;
+`;
+
 export default function BoardList() {
   const [page, setPage] = useState(0);
   const size = 10;
@@ -59,7 +74,12 @@ export default function BoardList() {
 
   return (
     <>
-      <h2>게시글 목록</h2>
+      <TopBar>
+        <h2 style={{ margin: 0 }}>게시글 목록</h2>
+        <Link to="/boards/new">
+          <WriteButton type="button">글쓰기</WriteButton>
+        </Link>
+      </TopBar>
 
       <List>
         {boards.map((board) => (
