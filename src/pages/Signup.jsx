@@ -1,59 +1,7 @@
 import { useState } from "react";
-import styled from "styled-components";
+import * as S from "./Signup.styles";
 import { useNavigate, Link } from "react-router-dom";
 import { signupApi } from "../api/auth";
-
-const Wrap = styled.div`
-  max-width: 420px;
-  margin: 60px auto;
-  padding: 24px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
-`;
-
-const Field = styled.div`
-  margin-bottom: 12px;
-`;
-
-const Label = styled.div`
-  font-size: 13px;
-  color: #555;
-  margin-bottom: 6px;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-`;
-
-const Button = styled.button`
-  width: 100%;
-  padding: 10px;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
-const Helper = styled.div`
-  margin-top: 10px;
-  font-size: 13px;
-  color: #666;
-`;
-
-const ErrorText = styled.div`
-  margin-top: 8px;
-  font-size: 13px;
-  color: #d00;
-`;
 
 function isPasswordValid(pw) {
   // 8자 이상 + 숫자 + 영문 + 특수문자(!%*#?&) 최소 1개 조합
@@ -129,58 +77,58 @@ export default function Signup() {
   };
 
   return (
-    <Wrap>
+    <S.Wrap>
       <h2>회원가입</h2>
 
       <form onSubmit={onSubmit}>
-        <Field>
-          <Label>이메일(username)</Label>
-          <Input
+        <S.Field>
+          <S.Label>이메일(username)</S.Label>
+          <S.Input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="example@bigs.or.kr"
           />
-        </Field>
+        </S.Field>
 
-        <Field>
-          <Label>이름</Label>
-          <Input
+        <S.Field>
+          <S.Label>이름</S.Label>
+          <S.Input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="사용자 이름"
           />
-        </Field>
+        </S.Field>
 
-        <Field>
-          <Label>비밀번호</Label>
-          <Input
+        <S.Field>
+          <S.Label>비밀번호</S.Label>
+          <S.Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="8자 이상 + 숫자/영문/특수문자 포함"
           />
-        </Field>
+        </S.Field>
 
-        <Field>
-          <Label>비밀번호 확인</Label>
-          <Input
+        <S.Field>
+          <S.Label>비밀번호 확인</S.Label>
+          <S.Input
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="비밀번호를 한번 더 입력"
           />
-        </Field>
+        </S.Field>
 
-        <Button disabled={!canSubmit || loading}>
+        <S.Button disabled={!canSubmit || loading}>
           {loading ? "가입 중..." : "회원가입"}
-        </Button>
+        </S.Button>
 
-        {errorMsg && <ErrorText>{errorMsg}</ErrorText>}
+        {errorMsg && <S.ErrorText>{errorMsg}</S.ErrorText>}
 
-        <Helper>
+        <S.Helper>
           이미 계정이 있어? <Link to="/login">로그인</Link>
-        </Helper>
+        </S.Helper>
       </form>
-    </Wrap>
+    </S.Wrap>
   );
 }

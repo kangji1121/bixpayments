@@ -1,65 +1,8 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import styled from "styled-components";
+import * as S from "./BoardDetail.styles";
 import { deleteBoard, getBoardDetail } from "../api/boards";
 import useAuthStore from "../store/authStore";
-
-const Container = styled.div`
-  max-width: 800px;
-  margin: 30px auto;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-  border-radius: 8px;
-  background: #fff;
-`;
-
-const ActionBar = styled.div`
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-  align-items: center;
-`;
-
-const Button = styled.button`
-  cursor: pointer;
-  background-color: #111;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 14px;
-  font-size: 14px;
-
-  &:hover {
-    background-color: #333;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
-const Title = styled.h2`
-  margin-bottom: 8px;
-`;
-
-const Meta = styled.div`
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 20px;
-`;
-
-const Image = styled.img`
-  max-width: 100%;
-  margin-bottom: 20px;
-  border-radius: 6px;
-`;
-
-const Content = styled.div`
-  white-space: pre-wrap;
-  line-height: 1.5;
-  margin-bottom: 20px;
-`;
 
 export default function BoardDetail() {
   const { id } = useParams();
@@ -94,25 +37,27 @@ export default function BoardDetail() {
     : null;
 
   return (
-    <Container>
-      <Title>{board.title}</Title>
-      <Meta>
+    <S.Container>
+      <S.Title>{board.title}</S.Title>
+      <S.Meta>
         {board.category ?? board.boardCategory} · {board.createdAt.slice(0, 10)}
-      </Meta>
+      </S.Meta>
 
-      {imageSrc && <Image src={imageSrc} alt="board image" />}
+      {imageSrc && <S.Image src={imageSrc} alt="board image" />}
 
-      <Content>{board.content}</Content>
+      <S.Content>{board.content}</S.Content>
 
-      <ActionBar>
+      <S.ActionBar>
         <Link to="/boards">
-          <Button as="span">목록</Button>
+          <S.Button as="span">목록</S.Button>
         </Link>
 
         {accessToken && (
           <>
-            <Button onClick={() => navigate(`/boards/${id}/edit`)}>수정</Button>
-            <Button
+            <S.Button onClick={() => navigate(`/boards/${id}/edit`)}>
+              수정
+            </S.Button>
+            <S.Button
               disabled={deleteMutation.isPending}
               onClick={() => {
                 if (window.confirm("삭제할까요?")) {
@@ -121,10 +66,10 @@ export default function BoardDetail() {
               }}
             >
               {deleteMutation.isPending ? "삭제중..." : "삭제"}
-            </Button>
+            </S.Button>
           </>
         )}
-      </ActionBar>
-    </Container>
+      </S.ActionBar>
+    </S.Container>
   );
 }
