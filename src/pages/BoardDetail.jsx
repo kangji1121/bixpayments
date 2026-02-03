@@ -97,7 +97,7 @@ export default function BoardDetail() {
     <Container>
       <Title>{board.title}</Title>
       <Meta>
-        {board.category} · {board.createdAt.slice(0, 10)}
+        {board.category ?? board.boardCategory} · {board.createdAt.slice(0, 10)}
       </Meta>
 
       {imageSrc && <Image src={imageSrc} alt="board image" />}

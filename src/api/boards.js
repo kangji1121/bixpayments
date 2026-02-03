@@ -22,3 +22,16 @@ export const createBoard = ({ title, content, category }) => {
     // Content-Type 강제 지정 금지 (boundary 자동)
     return api.post("/boards", formData);
 };
+
+export const updateBoard = ({ id, title, content, category }) => {
+    const formData = new FormData();
+    const payload = { title, content, category };
+
+    formData.append(
+        "request",
+        new Blob([JSON.stringify(payload)], { type: "application/json" })
+    );
+
+    // Content-Type 강제 지정 금지 (boundary 자동)
+    return api.patch(`/boards/${id}`, formData);
+};
