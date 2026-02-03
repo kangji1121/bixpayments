@@ -1,7 +1,186 @@
-import React from "react";
+import { useState } from "react";
+import styled from "styled-components";
+import { useNavigate, Link } from "react-router-dom";
+import { signupApi } from "../api/auth";
 
-const Signup = () => {
-  return <div>Signup</div>;
-};
+const Wrap = styled.div`
+  max-width: 420px;
+  margin: 60px auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+`;
 
-export default Signup;
+const Field = styled.div`
+  margin-bottom: 12px;
+`;
+
+const Label = styled.div`
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 6px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+`;
+
+const Button = styled.button`
+  width: 100%;
+  padding: 10px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const Helper = styled.div`
+  margin-top: 10px;
+  font-size: 13px;
+  color: #666;
+`;
+
+const ErrorText = styled.div`
+  margin-top: 8px;
+  font-size: 13px;
+  color: #d00;
+`;
+
+function isPasswordValid(pw) {
+  // 8자 이상 + 숫자 + 영문 + 특수문자(!%*#?&) 최소 1개 조합
+  return (
+    pw.length >= 8 &&
+    /[0-9]/.test(pw) &&
+    /[a-zA-Z]/.test(pw) &&
+    /[!%*#?&]/.test(pw)
+  );
+}
+
+export default function Signup() {
+  const navigate = useNavigate();
+
+  const [username, setUsername] = useState(""); // email
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const canSubmit =
+    username.trim().length > 0 &&
+    name.trim().length > 0 &&
+    isPasswordValid(password) &&
+    password === confirmPassword;
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMsg("");
+
+    if (!canSubmit) {
+      setErrorMsg("입력값을 다시 확인해주세요.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await signupApi({ username, name, password, confirmPassword });
+      alert("회원가입 성공! 로그인 해주세요.");
+      navigate("/login");
+    } catch (err) {
+      console.error(
+        "signup error:",
+        err?.response?.status,
+        err?.response?.data
+      );
+
+      const data = err?.response?.data;
+
+      let msg = "회원가입 실패";
+
+      if (typeof data === "string") {
+        msg = data;
+      } else if (Array.isArray(data)) {
+        msg = data.join("\n");
+      } else if (data && typeof data === "object") {
+        // { field: ["message"] } 형태 처리
+        const values = Object.values(data);
+        if (values.every((v) => Array.isArray(v))) {
+          msg = values.flat().join("\n");
+        } else if (data.message) {
+          msg = data.message;
+        } else if (data.error) {
+          msg = data.error;
+        }
+      }
+
+      setErrorMsg(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Wrap>
+      <h2>회원가입</h2>
+
+      <form onSubmit={onSubmit}>
+        <Field>
+          <Label>이메일(username)</Label>
+          <Input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="example@bigs.or.kr"
+          />
+        </Field>
+
+        <Field>
+          <Label>이름</Label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="사용자 이름"
+          />
+        </Field>
+
+        <Field>
+          <Label>비밀번호</Label>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="8자 이상 + 숫자/영문/특수문자 포함"
+          />
+        </Field>
+
+        <Field>
+          <Label>비밀번호 확인</Label>
+          <Input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="비밀번호를 한번 더 입력"
+          />
+        </Field>
+
+        <Button disabled={!canSubmit || loading}>
+          {loading ? "가입 중..." : "회원가입"}
+        </Button>
+
+        {errorMsg && <ErrorText>{errorMsg}</ErrorText>}
+
+        <Helper>
+          이미 계정이 있어? <Link to="/login">로그인</Link>
+        </Helper>
+      </form>
+    </Wrap>
+  );
+}
